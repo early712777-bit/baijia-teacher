@@ -1,22 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>你的百家老師</title>
+<meta charset="UTF-8">
+<title>百家老師 AI</title>
+
+<style>
+
+body{
+background:#000c2e;
+color:white;
+text-align:center;
+font-family:sans-serif;
+}
+
+button{
+padding:15px 30px;
+margin:10px;
+font-size:20px;
+border:none;
+border-radius:10px;
+}
+
+.banker{
+background:#ef4444;
+color:white;
+}
+
+.player{
+background:#3b82f6;
+color:white;
+}
+
+#road{
+margin-top:20px;
+}
+
+.dot{
+display:inline-block;
+width:20px;
+height:20px;
+border-radius:50%;
+margin:4px;
+}
+
+.red{
+background:red;
+}
+
+.blue{
+background:blue;
+}
+
+</style>
+
 </head>
 
-<body style="background:#020b2d;color:white;text-align:center;font-family:sans-serif">
+<body>
 
-<h1>你的百家老師</h1>
+<h1>百家老師 AI</h1>
 
-<button onclick="add('B')" style="padding:20px;background:red;color:white">莊</button>
-<button onclick="add('P')" style="padding:20px;background:blue;color:white">閒</button>
+<input type="file" accept="image/*" onchange="preview(event)">
 
 <br><br>
+
+<img id="img" width="300">
+
+<br><br>
+
+<button class="banker" onclick="add('B')">莊</button>
+<button class="player" onclick="add('P')">閒</button>
+
+<br>
 
 <button onclick="reset()">重置</button>
 
 <h2>大路</h2>
+
 <div id="road"></div>
 
 <h2 id="predict">下一局預測：-</h2>
@@ -25,38 +84,74 @@
 
 let history=[];
 
+function preview(e){
+
+let img=document.getElementById("img");
+img.src=URL.createObjectURL(e.target.files[0]);
+
+}
+
 function add(x){
+
 history.push(x);
+
 draw();
-predict();
+
 }
 
 function draw(){
+
 let road=document.getElementById("road");
+
 road.innerHTML="";
-history.forEach(v=>{
-let d=document.createElement("span");
-d.style.width="20px";
-d.style.height="20px";
-d.style.display="inline-block";
-d.style.borderRadius="50%";
-d.style.margin="3px";
-d.style.background=v==="B"?"red":"blue";
+
+history.forEach(h=>{
+
+let d=document.createElement("div");
+
+d.className="dot "+(h=="B"?"red":"blue");
+
 road.appendChild(d);
+
 });
+
+predict();
+
 }
 
 function predict(){
-let banker=history.filter(x=>x==="B").length;
-let player=history.filter(x=>x==="P").length;
-let result=banker>player?"閒":"莊";
-document.getElementById("predict").innerText="下一局預測："+result;
+
+if(history.length<2){
+
+document.getElementById("predict").innerText="下一局預測：-";
+
+return;
+
+}
+
+let last=history[history.length-1];
+let prev=history[history.length-2];
+
+if(last==prev){
+
+document.getElementById("predict").innerText=
+"下一局預測："+(last=="B"?"莊":"閒");
+
+}else{
+
+document.getElementById("predict").innerText=
+"下一局預測："+(last=="B"?"閒":"莊");
+
+}
+
 }
 
 function reset(){
+
 history=[];
+
 draw();
-document.getElementById("predict").innerText="下一局預測：-";
+
 }
 
 </script>
